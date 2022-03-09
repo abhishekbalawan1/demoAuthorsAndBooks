@@ -14,7 +14,7 @@ import javax.validation.constraints.Size;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Book {
+public class BookEntity {
     @Id
     @NotNull
     int id;

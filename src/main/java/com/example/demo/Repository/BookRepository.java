@@ -1,14 +1,16 @@
 package com.example.demo.Repository;
 
-import com.example.demo.Entity.Book;
+import com.example.demo.Entity.BookEntity;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-public interface BookRepository extends CrudRepository<Book, Integer> {
+@Repository
+public interface BookRepository extends CrudRepository<BookEntity, Integer> {
 
-    @Query("Select bookObject from Book bookObject WHERE bookObject.authorId = :n")
-    public List<Book> getBookByAuthor(@Param("n") int authorId);
+    @Query("Select bookObject from BookEntity bookObject WHERE bookObject.authorId = :n")
+    public List<BookEntity> getBookByAuthor(@Param("n") int authorId);
 }
