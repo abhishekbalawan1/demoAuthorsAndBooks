@@ -10,9 +10,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.service.spi.InjectService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -20,15 +19,35 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
 @NoArgsConstructor
 @Data
 public class AuthorService {
 
-    @Autowired
     private AuthorRepository authorRepository;
-    @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    public AuthorService(AuthorRepository authorRepository, BookRepository bookRepository){
+        this.authorRepository = authorRepository;
+        this.bookRepository = bookRepository;
+    }
+
+    public Page<AuthorEntity> getAllAuthors(int page){
+        Pageable pageable = PageRequest.of(page, 2);
+        return authorRepository.getAllAuthors(pageable);
+    }
+
+    public List<AuthorEntity> getAuthorsByExample(String name){
+        AuthorEntity author = new AuthorEntity();
+        author.setName(name);
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withIgnorePaths("address")
+                .withIgnorePaths("id")
+                .withIgnorePaths("age");
+        Example<AuthorEntity> examples = Example.of(author, matcher);
+        List<AuthorEntity> similarAuthors = authorRepository.findAll(examples);
+        return similarAuthors;
+    }
 
     public List<AuthorEntity> getAuthors(){
         List<AuthorEntity> authorList = new LinkedList<AuthorEntity>();

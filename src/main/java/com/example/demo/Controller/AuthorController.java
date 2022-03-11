@@ -7,9 +7,13 @@ import com.example.demo.Service.AuthorService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.catalina.core.ApplicationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
@@ -22,10 +26,30 @@ import java.util.List;
 @Data
 public class AuthorController{
 
-    @Autowired
     private AuthorService service;
 
+    @Autowired
+    public AuthorController(AuthorService service){
+        this.service = service;
+    }
+
     Logger logger = LoggerFactory.getLogger(AuthorController.class);
+
+    @GetMapping("/authorsWithPagination/{page}")
+    public Page<AuthorEntity> getAuthors(@PathVariable int page){
+        logger.debug("Getting authors information...");
+        Page<AuthorEntity> listAuthors = service.getAllAuthors(page);
+        logger.debug("Getting authors information completed.");
+        return listAuthors;
+    }
+
+    @GetMapping("/authorsExample/{name}")
+    public List<AuthorEntity> getAuthorsByEx(@PathVariable String name){
+        logger.debug("Getting authors information...");
+        List<AuthorEntity> listAuthors = service.getAuthorsByExample(name);
+        logger.debug("Getting authors information completed.");
+        return listAuthors;
+    }
 
     @GetMapping("/authors")
     public List<AuthorEntity> getAuthors(){
